@@ -6,10 +6,10 @@ namespace Capstone.Classes
 {
     public class Product
     {
-        private string ProductType { get; }
-        private string ProductName { get; }
-        private string ProductSound { get; }
-        private double ProductPrice { get; }
+        public string ProductType { get; }
+        public string ProductName { get; }
+
+        public double ProductPrice { get; }
 
 
 
@@ -17,7 +17,6 @@ namespace Capstone.Classes
         {
             ProductType = productType;
             ProductName = productName;
-            ProductSound = productName;
             ProductPrice = productPrice;
         }
 
