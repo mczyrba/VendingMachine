@@ -54,7 +54,7 @@ namespace VendingMachine
                 //***********************************************]
                 int userChoice = objVendingMachine.DisplayTopMenu(true);
 
-                if (userChoice == 1)
+                if (userChoice == 1) // top menu choice
                 {
 
                     Console.Clear();
@@ -65,10 +65,35 @@ namespace VendingMachine
                     Console.WriteLine();
                     Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
                     Console.WriteLine();
-                    objVendingMachine.DisplayTopMenu(false);
+                    userChoice = objVendingMachine.DisplayTopMenu(false);
+                }
+                if (userChoice == 2) //top menu choice
+                {
+                    userChoice = objVendingMachine.DisplaySubMenu(objVendingMachine.MoneyRemaing, true);
+                    while(userChoice == 1 ) //submenu choice
+                    {
+                        double balance = objVendingMachine.FeedMe();
+                        userChoice = objVendingMachine.DisplaySubMenu(balance, true);
+                    }
+
+                    // copy the top menu choice  1-- this is to get us to a new breakout menu with the displaying the items and propting user for selection
+                    //Console.Clear();
+                    //foreach (Slot item in stockInMachine)
+                    //{
+                    //    Console.WriteLine($"{item.ProductLocation} - {item.ProductName} - {item.ProductPrice} - {item.numberOfItems} remaining");
+                    //}
+                    //Console.WriteLine();
+                    //Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+                    //Console.WriteLine();
+
+                    // currently in the menu to purchase or feed money or finish- (sub menu)
+
+                    //make another while-- in the menu for purchasing, after a purchase (balance displayed is updated) new menu, "would
+                    //you like to make another puchase y/n
+
                 }
             }
-
+            
 
             Console.ReadLine();
         }//END OF MAIN()

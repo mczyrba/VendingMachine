@@ -13,6 +13,7 @@ namespace VendingMachine
         private double SalesTotal { get; set; }
         private double CurrentMoneyProvided { get; set; }
         public double MoneyRemaing { get; set; }
+        //public double MoneyRemaining {get{currentMoneyProvide - itemprice};} 
         public string CurrentState { get; set; } = "Ready";
         public Dictionary<string, int> NumberOfItemsSold = new Dictionary<string, int>();
         public List<string> TransactionLog = new List<string>();
@@ -114,7 +115,7 @@ namespace VendingMachine
                 
             
         }//END DISPLAYTOPMENU()
-        public int DisplaySubMenu(double currMoneyProvided, bool clearScreen )
+        public int DisplaySubMenu(double currMoneyProvided, bool clearScreen)
         {
             int numSelected = 1;
             string menuSelection = "";
@@ -163,7 +164,28 @@ namespace VendingMachine
 
                 return numSelected;
             }
+        }//end of display sub menu
+        public double FeedMe()
+            {
+                double moneyEntered = 0;
+                Console.WriteLine("Amount to add:");
+                string amountAdded = Console.ReadLine();
 
+                //--- Make sure user enters an double
+
+                while (!double.TryParse(amountAdded, out moneyEntered) || (int.Parse(amountAdded) < 0))
+                {
+                    Console.WriteLine("Amount to add:");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Please add appropriate funds.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    amountAdded = Console.ReadLine();
+
+                }
+                this.CurrentMoneyProvided += double.Parse(amountAdded);
+                
+                return CurrentMoneyProvided;
+                
 
 
         }
