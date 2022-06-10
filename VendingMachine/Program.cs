@@ -58,9 +58,17 @@ namespace VendingMachine
                 {
 
                     Console.Clear();
+                    Console.WriteLine("==================================================");
+                    Console.WriteLine("Loc |       Item           | Price     | # Items |");
+                    Console.WriteLine("==================================================");
                     foreach (Slot item in stockInMachine)
                     {
-                        Console.WriteLine($"{item.ProductLocation} - {item.ProductName} - {item.ProductPrice} - {item.numberOfItems} remaining");
+                        Console.WriteLine(string.Format("{0,-3} | {1,-20} | {2,-10}|{3,5}    |",
+                            item.ProductLocation,
+                            item.ProductName,
+                            item.ProductPrice,
+                            item.numberOfItems));
+                    // Console.WriteLine($"{item.ProductLocation} - {item.ProductName} - {item.ProductPrice} - {item.numberOfItems} remaining");
                     }
                     Console.WriteLine();
                     Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
@@ -77,15 +85,26 @@ namespace VendingMachine
                     }
 
                     // copy the top menu choice  1-- this is to get us to a new breakout menu with the displaying the items and propting user for selection
-                    //Console.Clear();
-                    //foreach (Slot item in stockInMachine)
-                    //{
-                    //    Console.WriteLine($"{item.ProductLocation} - {item.ProductName} - {item.ProductPrice} - {item.numberOfItems} remaining");
-                    //}
-                    //Console.WriteLine();
-                    //Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
-                    //Console.WriteLine();
+                    //this is needing to be enapsulated in choice 2
+                    Console.Clear();
+                    Console.WriteLine("==================================================");
+                    Console.WriteLine("Loc |       Item           | Price     | # Items |");
+                    Console.WriteLine("==================================================");
+                    foreach (Slot item in stockInMachine)
 
+                    {
+                        Console.WriteLine(string.Format("{0,-3} | {1,-20} | {2,-10}|{3,5}    |",
+                             item.ProductLocation,
+                             item.ProductName,
+                             item.ProductPrice,
+                             item.numberOfItems));
+                        //Console.WriteLine($"{item.ProductLocation} - {item.ProductName} - {item.ProductPrice} - {item.numberOfItems} remaining");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+                    Console.WriteLine();
+                    Console.WriteLine("Please make a selection, ");
+                    // to format even columns or set product name to a specific amount of spaces
                     // currently in the menu to purchase or feed money or finish- (sub menu)
 
                     //make another while-- in the menu for purchasing, after a purchase (balance displayed is updated) new menu, "would
