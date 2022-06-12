@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace VendingMachine
@@ -12,9 +13,10 @@ namespace VendingMachine
         //PROPERTIES
         private double SalesTotal { get; set; }
         private double CurrentMoneyProvided { get; set; }
-        public double MoneyRemaing { get; set; }
+        public double AvailableBalance { get; set; }
         //public double MoneyRemaining {get{currentMoneyProvide - itemprice};} 
         public string CurrentState { get; set; } = "Ready";
+        
         public Dictionary<string, int> NumberOfItemsSold = new Dictionary<string, int>();
         public List<string> TransactionLog = new List<string>();
 
@@ -24,23 +26,28 @@ namespace VendingMachine
 
 
         //METHODS
+
+
+
+        //***********************************************]
+        //*******   MAKE CHANGE  ************************]
+        //***********************************************]
         public double MakeChange(double itemPrice)
         {
             double yourChange = 0;
             //CALCULATE CHANGE TO GIVE BACK
-            if(CurrentMoneyProvided > MoneyRemaing)
-            {
-                MoneyRemaing -= itemPrice;
-                yourChange = MoneyRemaing;
-            }
-            else
-            {
-                MoneyRemaing = CurrentMoneyProvided - itemPrice;
-                yourChange = MoneyRemaing;
-            }
+
+                AvailableBalance -= itemPrice;
+                yourChange = AvailableBalance;
+          
             return yourChange;
         }
 
+
+
+        //***********************************************]
+        //*******   WRITE TO LOG FILE  ******************]
+        //***********************************************]
         public bool WriteToLogFile()
         {
             
@@ -67,22 +74,26 @@ namespace VendingMachine
                 }
 
             return true;
-        }
+        }//End of MakeChange()
+
+        //***********************************************]
+        //*******   DISPLAY MAIN MENU  ******************]
+        //***********************************************]
         public int DisplayTopMenu(bool clearScreen)
         {
             int numSelected = 1;
             string menuSelection = "";
 
-
             //--- DISPLAY TOP MENU
             if (clearScreen)
             {
                 Console.Clear();
+                DisplayBanner();
             }
                 
                 Console.WriteLine("Please make a selection 1, 2 or 3");
                 Console.WriteLine("(1) Display Vending Machine Items");
-                Console.WriteLine("(2) Purchase");
+                Console.WriteLine("(2) Make a Purchase \\ Add to Available Balance");
                 Console.WriteLine("(3) Exit");
                 menuSelection = Console.ReadLine();
 
@@ -99,13 +110,14 @@ namespace VendingMachine
                         if (clearScreen)
                         {
                             Console.Clear();
-                        }
+                        DisplayBanner();
+                    }
                         Console.WriteLine("(1) Display Vending Machine Items");
                         Console.WriteLine("(2) Purchase");
                         Console.WriteLine("(3) Exit");
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid number. Please try again.");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("\nInvalid number. Please try again. \n");
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Please make a selection 1, 2 or 3");
                         menuSelection = Console.ReadLine();
                     }
@@ -115,23 +127,29 @@ namespace VendingMachine
                 
             
         }//END DISPLAYTOPMENU()
-        public int DisplaySubMenu(double currMoneyProvided, bool clearScreen)
+
+        //***********************************************]
+        //*******   DISPLAY SUB MENU  *******************]
+        //***********************************************]
+        public int DisplaySubMenu(bool clearScreen)
         {
             int numSelected = 1;
             string menuSelection = "";
 
 
-            //--- DISPLAY SUB MENU( TL CHOICE 2)
+            //--- DISPLAY SUB MENU( MAIN MENU CHOICE 2)
             if (clearScreen)
             {
                 Console.Clear();
+                DisplayBanner();
             }
-            Console.WriteLine($"Current Money Provided: ${currMoneyProvided}");
+            Console.WriteLine($"Available Balance: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("(1) Feed Money");
             Console.WriteLine("(2) Select Product");
             Console.WriteLine("(3) Finish Transaction");
+            Console.WriteLine("(4) Cancel and return to Main Menu");
 
             menuSelection = Console.ReadLine();
 
@@ -148,13 +166,15 @@ namespace VendingMachine
                     if (clearScreen)
                     {
                         Console.Clear();
+                        DisplayBanner();
                     }
-                    Console.WriteLine($"Current Money Provided: ${currMoneyProvided}");
+                    Console.WriteLine($"Current Money Provided: ${this.AvailableBalance}");
                     Console.WriteLine();
                     Console.WriteLine();
                     Console.WriteLine("(1) Feed Money");
                     Console.WriteLine("(2) Select Product");
                     Console.WriteLine("(3) Finish Transaction");
+                    Console.WriteLine("(4) Cancel and return to Main Menu");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid number. Please try again.");
                     Console.ForegroundColor = ConsoleColor.White;
@@ -165,29 +185,64 @@ namespace VendingMachine
                 return numSelected;
             }
         }//end of display sub menu
-        public double FeedMe()
+
+
+
+        //***********************************************]
+        //*******   FEED MONEY IN  **********************]
+        //***********************************************]
+        public void FeedMe()
             {
+            Console.Clear();
+            DisplayBanner();
+            Console.WriteLine($"Available Balance: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("(1) Feed Money");
+            Console.WriteLine("(2) Select Product");
+            Console.WriteLine("(3) Finish Transaction");
+            Console.WriteLine("(4) Cancel and return to Main Menu");
                 double moneyEntered = 0;
-                Console.WriteLine("Amount to add:");
+            Console.WriteLine();
+            Console.WriteLine();
+                Console.WriteLine("Enter amount to add:");
                 string amountAdded = Console.ReadLine();
 
                 //--- Make sure user enters an double
 
-                while (!double.TryParse(amountAdded, out moneyEntered) || (int.Parse(amountAdded) < 0))
-                {
-                    Console.WriteLine("Amount to add:");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Please add appropriate funds.");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    amountAdded = Console.ReadLine();
+                while (!double.TryParse(amountAdded, out moneyEntered) || (double.Parse(amountAdded) < 0))
+                    {
+                        Console.WriteLine("Amount to add:");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Please add appropriate funds.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        amountAdded = Console.ReadLine();
 
-                }
-                this.CurrentMoneyProvided += double.Parse(amountAdded);
+                    }
+
+
+                //--- add money fed in to AvailableBalance
+                this.AvailableBalance += double.Parse(amountAdded);
                 
-                return CurrentMoneyProvided;
                 
+        }//END OF FEED ME
 
 
+        //***********************************************]
+        //*******   DISPLAY TITLE BANNER  ***************]
+        //***********************************************]
+
+        public void DisplayBanner()
+        {
+            //--- DISPLAY BANNER
+
+            Console.WriteLine(@" ________ __            _    _            _ ");
+            Console.WriteLine(@"|___   __|| |          |  \/  |          | |   (_)");
+            Console.WriteLine(@"    | |   | |__   ___  | \  / | __ _  ___| |__  _ _ __   ___");
+            Console.WriteLine(@"    | |   | '_ \ / _ \ | |\/| |/ _` |/ __| '_ \| | '_ \ / _ \");
+            Console.WriteLine(@"    | |   | | | |  __/ | |  | | (_| | (__| | | | | | | | __ / ");
+            Console.WriteLine(@"    |_|   |_| |_|\___| |_|  |_|\__,_|\___|_| |_|_|_| |_|\___| ");
+            Console.WriteLine("\n\n");
         }
 
     }
