@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VendingMachine;
 
 namespace VendingMachine
 {
@@ -27,13 +28,6 @@ namespace VendingMachine
 
         //METHODS
 
-        public void DispenceProduct(double moneyRemaining)
-        {
-            //Dispensing an item prints the item name, cost, and the money remaining. Dispensing also returns a sound message:
-            this.numberOfItems--;
-            Console.WriteLine($"Here is your {ProductName} - {ProductPrice}, remaining funds ${moneyRemaining}");
-            Console.WriteLine(ProductTypeSound);
-
-        }
+        
     }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Globalization;
+using VendingMachine;
+
 using System.Threading.Tasks;
 
 namespace VendingMachine
 {
-    class TheMachine
+    public class TheMachine
     {
 
         //PROPERTIES
@@ -19,13 +21,53 @@ namespace VendingMachine
         
         public Dictionary<string, int> NumberOfItemsSold = new Dictionary<string, int>();
         public List<string> TransactionLog = new List<string>();
-
+        public List<Slot> stockInMachine = new List<Slot>();
 
         //CONSTRUCTOR
 
 
 
         //METHODS
+
+        public bool DispenceProduct(string userSelection)
+        {
+            //Dispensing an item prints the item name, cost, and the money remaining. Dispensing also returns a sound message:
+            bool selectAgain = true;
+            bool itemfound = false;
+
+            foreach (Slot item in stockInMachine)
+            {
+                if (userSelection == item.ProductLocation)
+                {
+                    itemfound = true;
+                    item.numberOfItems--;
+                    this.AvailableBalance -= item.ProductPrice;
+
+                    Console.WriteLine($"Here is your {item.ProductName} - {item.ProductPrice}, remaining funds ${this.AvailableBalance}");
+                    Console.WriteLine(item.ProductTypeSound);
+                    Console.WriteLine("");
+
+
+                }
+
+            }
+            if (!itemfound)
+            {
+                Console.WriteLine("Please choose a valid selection.");
+
+            }
+
+            Console.WriteLine("Do you want to make another selection?(Y/N)");
+            string doYouWantAnother = Console.ReadLine();
+
+            if (doYouWantAnother == "N" || doYouWantAnother == "n")
+            {
+                selectAgain = false;
+            }
+            return selectAgain;
+
+        }
+
 
 
 
@@ -76,116 +118,9 @@ namespace VendingMachine
             return true;
         }//End of MakeChange()
 
-        //***********************************************]
-        //*******   DISPLAY MAIN MENU  ******************]
-        //***********************************************]
-        public int DisplayTopMenu(bool clearScreen)
-        {
-            int numSelected = 1;
-            string menuSelection = "";
+       
 
-            //--- DISPLAY TOP MENU
-            if (clearScreen)
-            {
-                Console.Clear();
-                DisplayBanner();
-            }
-                
-                Console.WriteLine("Please make a selection 1, 2 or 3");
-                Console.WriteLine("(1) Display Vending Machine Items");
-                Console.WriteLine("(2) Make a Purchase \\ Add to Available Balance");
-                Console.WriteLine("(3) Exit");
-                menuSelection = Console.ReadLine();
-
-                if (int.TryParse(menuSelection, out numSelected) && (int.Parse(menuSelection) >= 1 && int.Parse(menuSelection) <= 4))
-                {
-                    return numSelected;
-                }
-                else
-                {
-                    //--- Make sure user selects valid choice
-
-                    while (!int.TryParse(menuSelection, out numSelected) || (int.Parse(menuSelection) < 0 || int.Parse(menuSelection) > 4))
-                    {
-                        if (clearScreen)
-                        {
-                            Console.Clear();
-                        DisplayBanner();
-                    }
-                        Console.WriteLine("(1) Display Vending Machine Items");
-                        Console.WriteLine("(2) Purchase");
-                        Console.WriteLine("(3) Exit");
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\nInvalid number. Please try again. \n");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Please make a selection 1, 2 or 3");
-                        menuSelection = Console.ReadLine();
-                    }
-
-                    return numSelected;
-                }
-                
-            
-        }//END DISPLAYTOPMENU()
-
-        //***********************************************]
-        //*******   DISPLAY SUB MENU  *******************]
-        //***********************************************]
-        public int DisplaySubMenu(bool clearScreen)
-        {
-            int numSelected = 1;
-            string menuSelection = "";
-
-
-            //--- DISPLAY SUB MENU( MAIN MENU CHOICE 2)
-            if (clearScreen)
-            {
-                Console.Clear();
-                DisplayBanner();
-            }
-            Console.WriteLine($"Available Balance: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("(1) Feed Money");
-            Console.WriteLine("(2) Select Product");
-            Console.WriteLine("(3) Finish Transaction");
-            Console.WriteLine("(4) Cancel and return to Main Menu");
-
-            menuSelection = Console.ReadLine();
-
-            if (int.TryParse(menuSelection, out numSelected) && (int.Parse(menuSelection) >= 1 && int.Parse(menuSelection) <= 4))
-            {
-                return numSelected;
-            }
-            else
-            {
-                //--- Make sure user selects valid choice
-
-                while (!int.TryParse(menuSelection, out numSelected) || (int.Parse(menuSelection) < 0 || int.Parse(menuSelection) > 4))
-                {
-                    if (clearScreen)
-                    {
-                        Console.Clear();
-                        DisplayBanner();
-                    }
-                    Console.WriteLine($"Current Money Provided: ${this.AvailableBalance}");
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine("(1) Feed Money");
-                    Console.WriteLine("(2) Select Product");
-                    Console.WriteLine("(3) Finish Transaction");
-                    Console.WriteLine("(4) Cancel and return to Main Menu");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid number. Please try again.");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Please make a selection 1, 2 or 3");
-                    menuSelection = Console.ReadLine();
-                }
-
-                return numSelected;
-            }
-        }//end of display sub menu
-
+        
 
 
         //***********************************************]
@@ -236,13 +171,35 @@ namespace VendingMachine
         {
             //--- DISPLAY BANNER
 
-            Console.WriteLine(@" ________ __            _    _            _ ");
+            Console.WriteLine(@"________ __            _    _            _ ");
             Console.WriteLine(@"|___   __|| |          |  \/  |          | |   (_)");
             Console.WriteLine(@"    | |   | |__   ___  | \  / | __ _  ___| |__  _ _ __   ___");
             Console.WriteLine(@"    | |   | '_ \ / _ \ | |\/| |/ _` |/ __| '_ \| | '_ \ / _ \");
             Console.WriteLine(@"    | |   | | | |  __/ | |  | | (_| | (__| | | | | | | | __ / ");
             Console.WriteLine(@"    |_|   |_| |_|\___| |_|  |_|\__,_|\___|_| |_|_|_| |_|\___| ");
-            Console.WriteLine("\n\n");
+            Console.WriteLine();
+        }
+
+        //***********************************************]
+        //*******  DISPLAYS ITEMS ON SCREEN  ************]
+        //***********************************************]
+        public void DisplayItems()
+        {
+            Console.Clear();
+            this.DisplayBanner();
+            Console.WriteLine("=================================================");
+            Console.WriteLine("| Loc |       Item           | Price  | # Items |");
+            Console.WriteLine("=================================================");
+            foreach (Slot item in stockInMachine)
+            {
+                Console.WriteLine(string.Format("| {0,-3} | {1,-20} | {2,-7}|{3,5}    |",
+                    item.ProductLocation,
+                    item.ProductName,
+                    item.ProductPrice.ToString("C", CultureInfo.CurrentCulture),
+                    item.numberOfItems));
+            }
+            Console.WriteLine("=================================================");
+            
         }
 
     }
