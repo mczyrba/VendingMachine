@@ -160,8 +160,9 @@ namespace VendingMachine
         {
             
             string directory = Environment.CurrentDirectory;
+            string logPath = @"C:\Users\Student\git\c-sharp-mini-capstone-module-1-team-2\";
             string logFileName = "SalesLog.txt";
-            string logFilePath = directory + logFileName;
+            string logFilePath = logPath + logFileName;
             
 
                 try
@@ -227,7 +228,7 @@ namespace VendingMachine
 
                 //--- add money fed in to AvailableBalance
                 this.AvailableBalance += double.Parse(amountAdded);
-                
+            TransactionLog.Add($"{DateTime.Now.ToString(CultureInfo.CurrentCulture)} FEED MONEY: ${amountAdded} ${(decimal)AvailableBalance}");
                 
         }//END OF FEED ME
 

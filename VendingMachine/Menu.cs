@@ -159,7 +159,7 @@ namespace VendingMachine
                 if(MenuSelection == 3)
                 {
                     //complete trans
-                    TransactionLog.Add($"{DateTime.Now.ToString(CultureInfo.CurrentCulture)} GIVE CHANGE {AvailableBalance.ToString("C", CultureInfo.CurrentCulture)} {0}");
+                    TransactionLog.Add($"{DateTime.Now.ToString(CultureInfo.CurrentCulture)} GIVE CHANGE {AvailableBalance.ToString("C", CultureInfo.CurrentCulture)} ${0.00}");
                     MessageToUser =  WriteToLogFile();
                    // MessageToUser = MakeChange();
                     AvailableBalance = 0;
