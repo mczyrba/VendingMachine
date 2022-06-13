@@ -5,17 +5,17 @@ using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
 
+
 namespace VendingMachine
 {
     class Program
     {
         static void Main(string[] args)
         {
-
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Please Standby.......");
 
-            //--- SPIN UP TheMachine
-            TheMachine objVendingMachine = new TheMachine();
+                      
 
             //***********************************************]
             //*******   Create inventory    *****************]
@@ -25,6 +25,8 @@ namespace VendingMachine
             string csvFilePath = directory + csvFileName;
            
            // Dictionary<string, Slot> inventoryDic = new Dictionary<string, Slot>();
+            List<Slot> inventoryList = new List<Slot>();
+
 
             try
             {
@@ -34,7 +36,7 @@ namespace VendingMachine
                     {
                         string line = inventory.ReadLine();
                         string[] arrOfCurrentLine = line.Split(',');
-                        objVendingMachine.stockInMachine.Add
+                        inventoryList.Add
                             (new Slot(arrOfCurrentLine[0].ToString(), arrOfCurrentLine[1].ToString(), double.Parse(arrOfCurrentLine[2]), arrOfCurrentLine[3].ToString())
                             );
                        // inventoryDic[arrOfCurrentLine[0]] = new Slot(arrOfCurrentLine[0].ToString(), arrOfCurrentLine[1].ToString(), double.Parse(arrOfCurrentLine[2]), arrOfCurrentLine[3].ToString());
@@ -42,35 +44,29 @@ namespace VendingMachine
                      }
                 }
                 
+                
             }
             catch(IOException ex)
             {
                 Console.WriteLine("Oh no! Something went wrong! Unable to Continue");
                 Console.WriteLine(ex.Message);
-                objVendingMachine.CurrentState = "Not Ready";
+                //objVendingMachine.CurrentState = "Not Ready";
                 Console.WriteLine("Please press any key to EXIT The Machine");
             }
 
-            MainMenu TopMenu = new MainMenu();
-            Submenu purchasingMenu = new Submenu();
+            //--- SPIN UP TheMachine
+            TheMachine objVendingMachine = new TheMachine(inventoryList);
 
             if (objVendingMachine.CurrentState == "Ready")
             {
                 //***********************************************]
                 //*******   MAIN MENU   *************************]
                 //***********************************************]
+
+                Menu TopMenu = new Menu(objVendingMachine.StockedItemsInMachine);
                 TopMenu.DisplayTopMenu(true);
 
-                //if (userChoice == 1) // Main menu choice
-                //{
-                //    while (userChoice == 1) //Main Menu choice
-                //        {
-
-                //            DisplayItems();
-                //            userChoice = objVendingMachine.DisplayTopMenu(false);
-
-                //        }
-                //}
+             
                
             }
             

@@ -17,35 +17,73 @@ namespace VendingMachine
         private double CurrentMoneyProvided { get; set; }
         public double AvailableBalance { get; set; }
         //public double MoneyRemaining {get{currentMoneyProvide - itemprice};} 
-        public string CurrentState { get; set; } = "Ready";
+        public string CurrentState { get; set; } //= "Ready";
         
-        public Dictionary<string, int> NumberOfItemsSold = new Dictionary<string, int>();
-        public List<string> TransactionLog = new List<string>();
-        public List<Slot> stockInMachine = new List<Slot>();
+        public Dictionary<string, int> NumberOfItemsSold { get; } = new Dictionary<string, int>();
+        public List<string> TransactionLog { get; } = new List<string>();
+        public List<Slot> StockedItemsInMachine { get; } = new List<Slot>();
 
         //CONSTRUCTOR
-
+        public TheMachine(List<Slot> listOfItems4Sale)
+        {
+            CurrentState = "Ready";
+            StockedItemsInMachine = listOfItems4Sale;
+        }
 
 
         //METHODS
 
+        //***********************************************]
+        //*******   DISPENCE ITEM  **********************]
+        //***********************************************]
         public bool DispenceProduct(string userSelection)
         {
             //Dispensing an item prints the item name, cost, and the money remaining. Dispensing also returns a sound message:
             bool selectAgain = true;
             bool itemfound = false;
 
-            foreach (Slot item in stockInMachine)
+            foreach (Slot item in StockedItemsInMachine)
             {
-                if (userSelection == item.ProductLocation)
+                if (userSelection.ToUpper() == item.ProductLocation)
                 {
                     itemfound = true;
-                    item.numberOfItems--;
-                    this.AvailableBalance -= item.ProductPrice;
 
-                    Console.WriteLine($"Here is your {item.ProductName} - {item.ProductPrice}, remaining funds ${this.AvailableBalance}");
-                    Console.WriteLine(item.ProductTypeSound);
-                    Console.WriteLine("");
+                    if (item.numberOfItems > 0)
+                    {
+                        if (item.ProductPrice <= AvailableBalance)
+                        {
+                            item.numberOfItems--;
+                            this.AvailableBalance -= item.ProductPrice;
+
+                            Console.WriteLine($"Here is your {item.ProductName}({item.ProductPrice.ToString("C", CultureInfo.CurrentCulture)}) - remaining funds: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine(item.ProductTypeSound);
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine("");
+                            TransactionLog.Add($"{DateTime.Now.ToString(CultureInfo.CurrentCulture)} PURCHASED {item.ProductType} loc[{item.ProductLocation}] {item.ProductPrice.ToString("C", CultureInfo.CurrentCulture)} Available Funds: {AvailableBalance.ToString("C", CultureInfo.CurrentCulture) }" );
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Transaction cancelled due to insufficient funds");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write($"Available Balance: ");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"{AvailableBalance.ToString("C", CultureInfo.CurrentCulture) }");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("Oops! Item is Sold Out.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write($"Available Balance: ");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{AvailableBalance.ToString("C", CultureInfo.CurrentCulture) }");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
 
 
                 }
@@ -90,7 +128,7 @@ namespace VendingMachine
         //***********************************************]
         //*******   WRITE TO LOG FILE  ******************]
         //***********************************************]
-        public bool WriteToLogFile()
+        public string WriteToLogFile()
         {
             
             string directory = Environment.CurrentDirectory;
@@ -100,7 +138,7 @@ namespace VendingMachine
 
                 try
                 {
-                    using (StreamWriter logWriter = new StreamWriter(logFilePath, true))
+                    using (StreamWriter logWriter = new StreamWriter(logFilePath, true)) //--Appends to log file
                     {
                         foreach (string line in TransactionLog)
                         {
@@ -108,14 +146,17 @@ namespace VendingMachine
                         }
                     }
 
-                    
+
+                
                 }
                 catch (IOException ex)
                 {
-                    return false;
+                Console.WriteLine("Could Not Write To Log File");
+                Console.WriteLine(ex.Message);
+                    return "An Error ocurredwhen completing your transaction. Please call your bank.";
                 }
 
-            return true;
+            return $"Your Transaction is complete. YourChange = {AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}\nThank you.";
         }//End of MakeChange()
 
        
@@ -128,15 +169,15 @@ namespace VendingMachine
         //***********************************************]
         public void FeedMe()
             {
-            Console.Clear();
-            DisplayBanner();
-            Console.WriteLine($"Available Balance: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("(1) Feed Money");
-            Console.WriteLine("(2) Select Product");
-            Console.WriteLine("(3) Finish Transaction");
-            Console.WriteLine("(4) Cancel and return to Main Menu");
+            //Console.Clear();
+            //DisplayBanner();
+            //Console.WriteLine($"Available Balance: {this.AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}");
+            //Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine("(1) Feed Money");
+            //Console.WriteLine("(2) Select Product");
+            //Console.WriteLine("(3) Complete Transaction");
+            //Console.WriteLine("(4) Cancel and return to Main Menu");
                 double moneyEntered = 0;
             Console.WriteLine();
             Console.WriteLine();
@@ -171,7 +212,7 @@ namespace VendingMachine
         {
             //--- DISPLAY BANNER
 
-            Console.WriteLine(@"________ __            _    _            _ ");
+            Console.WriteLine(@" ________  _            _    _            _ ");
             Console.WriteLine(@"|___   __|| |          |  \/  |          | |   (_)");
             Console.WriteLine(@"    | |   | |__   ___  | \  / | __ _  ___| |__  _ _ __   ___");
             Console.WriteLine(@"    | |   | '_ \ / _ \ | |\/| |/ _` |/ __| '_ \| | '_ \ / _ \");
@@ -190,13 +231,27 @@ namespace VendingMachine
             Console.WriteLine("=================================================");
             Console.WriteLine("| Loc |       Item           | Price  | # Items |");
             Console.WriteLine("=================================================");
-            foreach (Slot item in stockInMachine)
+            foreach (Slot item in this.StockedItemsInMachine)
             {
-                Console.WriteLine(string.Format("| {0,-3} | {1,-20} | {2,-7}|{3,5}    |",
+                if(item.numberOfItems <= 0)
+                {
+                    Console.Write(string.Format("| {0,-3} | {1,-20} | {2,-7}",
+                    item.ProductLocation,
+                    item.ProductName,
+                    item.ProductPrice.ToString("C", CultureInfo.CurrentCulture)));
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("|Sold Out |");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.WriteLine(string.Format("| {0,-3} | {1,-20} | {2,-7}|{3,5}    |",
                     item.ProductLocation,
                     item.ProductName,
                     item.ProductPrice.ToString("C", CultureInfo.CurrentCulture),
                     item.numberOfItems));
+                }
+                
             }
             Console.WriteLine("=================================================");
             
