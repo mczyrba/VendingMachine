@@ -21,7 +21,7 @@ namespace VendingMachine
         
         public Dictionary<string, int> NumberOfItemsSold { get; } = new Dictionary<string, int>();
         public List<string> TransactionLog { get; } = new List<string>();
-        public List<Slot> StockedItemsInMachine { get; } = new List<Slot>();
+        public List<Slot> StockedItemsInMachine { get; set; } = new List<Slot>();
 
         //CONSTRUCTOR
         public TheMachine(List<Slot> listOfItems4Sale)
@@ -112,15 +112,43 @@ namespace VendingMachine
         //***********************************************]
         //*******   MAKE CHANGE  ************************]
         //***********************************************]
-        public double MakeChange(double itemPrice)
+        public string MakeChange()
         {
             double yourChange = 0;
             //CALCULATE CHANGE TO GIVE BACK
 
-                AvailableBalance -= itemPrice;
+                //AvailableBalance -= itemPrice;
                 yourChange = AvailableBalance;
+            string[] coinChange = AvailableBalance.ToString().Split('.');
+            int wholeDollar = int.Parse(coinChange[0]);
+            int coinage = int.Parse(coinChange[1]);
+            int quarters = wholeDollar * 4;
+            int dimes = 0;
+            int nickles = 0;
+            //string changeAnnouncment = ;
+
+          while(coinage > 0)
+            {
+                if (coinage >= 25)
+                {
+                    coinage -= 25;
+                    quarters++;
+                }
+                else if (coinage >= 10)
+                {
+                    coinage -= 10;
+                    dimes++;
+                }
+                else if (coinage >= 5)
+                {
+                    coinage -= 5;
+                    nickles++;
+                }
+            }
+
+            
           
-            return yourChange;
+            return $"Your change comes to {quarters.ToString()} quarters, {dimes.ToString()} dimes, and {nickles.ToString()} nickles.";
         }
 
 
@@ -156,7 +184,7 @@ namespace VendingMachine
                     return "An Error ocurredwhen completing your transaction. Please call your bank.";
                 }
 
-            return $"Your Transaction is complete. YourChange = {AvailableBalance.ToString("C", CultureInfo.CurrentCulture)}\nThank you.";
+            return $"Your Transaction is complete. {MakeChange()}\nThank you.";
         }//End of MakeChange()
 
        

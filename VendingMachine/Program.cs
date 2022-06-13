@@ -15,17 +15,21 @@ namespace VendingMachine
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Please Standby.......");
 
-                      
+
 
             //***********************************************]
             //*******   Create inventory    *****************]
             //***********************************************]
-            string directory = Environment.CurrentDirectory;
+            //
+            //string directory = Environment.CurrentDirectory;
+            string path = @"C:\Users\Student\git\c-sharp-mini-capstone-module-1-team-2\";
             string csvFileName = "vendingmachine.csv";
-            string csvFilePath = directory + csvFileName;
+            string csvFilePath = path + csvFileName;
            
            // Dictionary<string, Slot> inventoryDic = new Dictionary<string, Slot>();
             List<Slot> inventoryList = new List<Slot>();
+            //--- SPIN UP TheMachine
+            TheMachine objVendingMachine = new TheMachine(inventoryList);
 
 
             try
@@ -52,10 +56,11 @@ namespace VendingMachine
                 Console.WriteLine(ex.Message);
                 //objVendingMachine.CurrentState = "Not Ready";
                 Console.WriteLine("Please press any key to EXIT The Machine");
+                objVendingMachine.CurrentState = "Not Ready";
+
             }
 
-            //--- SPIN UP TheMachine
-            TheMachine objVendingMachine = new TheMachine(inventoryList);
+            
 
             if (objVendingMachine.CurrentState == "Ready")
             {

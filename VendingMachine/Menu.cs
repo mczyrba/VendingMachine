@@ -161,6 +161,7 @@ namespace VendingMachine
                     //complete trans
                     TransactionLog.Add($"{DateTime.Now.ToString(CultureInfo.CurrentCulture)} GIVE CHANGE {AvailableBalance.ToString("C", CultureInfo.CurrentCulture)} {0}");
                     MessageToUser =  WriteToLogFile();
+                   // MessageToUser = MakeChange();
                     AvailableBalance = 0;
                     MenuLevel = "Top";
                     MenuSelection = 0;
